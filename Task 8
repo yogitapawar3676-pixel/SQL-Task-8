@@ -1,0 +1,45 @@
+CREATE DATABASE task8_db;
+USE task8_db;
+
+CREATE TABLE employees (
+    emp_id INT PRIMARY KEY AUTO_INCREMENT,
+    emp_name VARCHAR(50) NOT NULL,
+    department VARCHAR(50),
+    salary DECIMAL(10,2)
+);
+
+INSERT INTO employees (emp_name, department, salary) VALUES
+('John Doe', 'IT', 55000),
+('Jane Smith', 'HR', 45000),
+('Robert Brown', 'IT', 65000),
+('Emily Davis', 'Finance', 70000);
+
+DELIMITER //
+CREATE PROCEDURE IncreaseSalaryByDept(
+    IN dept_name VARCHAR(50),
+    IN percentage DECIMAL(5,2)
+)
+BEGIN
+    UPDATE employees
+    SET salary = salary + (salary * (percentage / 100))
+    WHERE department = dept_name;
+END //
+DELIMITER ;
+
+
+DELIMITER //
+CREATE FUNCTION GetAnnualSalary(empId INT)
+RETURNS DECIMAL(10,2)
+DETERMINISTIC
+BEGIN
+    DECLARE annualSalary DECIMAL(10,2);
+    SELECT salary * 12 INTO annualSalary
+    FROM employees
+    WHERE emp_id = empId;
+    RETURN annualSalary;
+END //
+DELIMITER ;
+
+SELECT GetAnnualSalary(1) AS AnnualSalary;
+
+SELECT * FROM employees;
